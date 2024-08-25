@@ -226,37 +226,53 @@
     </style>
 
   <script>
-  window.onload = function() {
-    // تحميل البيانات من ملف JSON
-    fetch('index.json')
-      .then(response => response.json())
-      .then(data => {
-        const link = data.cinemana.link;
-        const text = data.comp.comp;
+  function updateContent(data) {
+  const link = data.cinemana.link;
+  const text = data.comp.comp;
 
-        document.getElementById('installButton').onclick = function() {
-          window.location.href = `itms-services://?action=download-manifest&url=${link}`;
-          setTimeout(function() {
-            window.location.href = 'https://t.me/PLUS_STORE2';
-          }, 1500);
-        };
+  document.getElementById('installButton').onclick = function() {
+    window.location.href = `itms-services://?action=download-manifest&url=${link}`;
+    setTimeout(function() {
+      window.location.href = 'https://t.me/PLUS_STORE2';
+    }, 1500);
+  };
 
-        document.getElementById('bottomRightText').innerText = text;
-      })
-      .catch(error => console.error('Error loading JSON data:', error));
+  document.getElementById('bottomRightText').innerText = text;
+}
 
-    // تأثيرات النص
+function longPolling() {
+  fetch('settings.json')
+    .then(response => response.json())
+    .then(data => {
+      updateContent(data);
+
+      // بعد تحديث المحتوى، إرسال طلب جديد بعد فترة قصيرة
+      setTimeout(longPolling, 1000); // طلب جديد بعد ثانية واحدة
+    })
+    .catch(error => {
+      console.error('Error loading JSON data:', error);
+
+      // إذا كان هناك خطأ، انتظر ثم حاول مرة أخرى
+      setTimeout(longPolling, 5000); // إعادة المحاولة بعد 5 ثوانٍ في حالة وجود خطأ
+    });
+}
+
+// استدعاء التحديث عند التحميل لأول مرة
+window.onload = function() {
+  longPolling();
+
+  // تأثيرات النص
+  setTimeout(() => {
+    document.querySelector('.intro-text').classList.add('fade-text');
     setTimeout(() => {
-      document.querySelector('.intro-text').classList.add('fade-text');
-      setTimeout(() => {
-        document.querySelector('.intro-text').style.display = 'none';
-        document.querySelector('.circle-container').classList.remove('hidden');
-        document.querySelector('.install-button').classList.remove('hidden');
-        document.querySelector('.below-text').classList.remove('hidden');
-        document.querySelector('.below-subtext').classList.remove('hidden');
-      }, 1990);
-    }, 100);
-  }
+      document.querySelector('.intro-text').style.display = 'none';
+      document.querySelector('.circle-container').classList.remove('hidden');
+      document.querySelector('.install-button').classList.remove('hidden');
+      document.querySelector('.below-text').classList.remove('hidden');
+      document.querySelector('.below-subtext').classList.remove('hidden');
+    }, 1990);
+  }, 100);
+}
 </script>
 </head>
 <body>
