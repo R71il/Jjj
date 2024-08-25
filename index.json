@@ -1,0 +1,29 @@
+{
+  "comp": {
+    "comp": " Insurance Group"
+  },
+
+  "cinemana": {
+"link": "https://example.com/manifest.plist"
+  },
+  
+    "vodu": {
+"link": "https://example.com/manifest.plist"
+  },
+  
+    "whatsapp": {
+"link": "https://example.com/manifest.plist"
+  },
+  
+    "tiktok": {
+"link": "https://example.com/manifest.plist"
+  },
+  
+    "youtube": {
+"link": "https://example.com/manifest.plist"
+  },
+  
+  "insta": {
+"link": "https://example.com/manifest.plist"
+  }
+}
