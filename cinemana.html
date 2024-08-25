@@ -240,26 +240,26 @@
   document.getElementById('bottomRightText').innerText = text;
 }
 
-function longPolling() {
+function checkForUpdates() {
   fetch('settings.json')
     .then(response => response.json())
     .then(data => {
       updateContent(data);
 
-      // بعد تحديث المحتوى، إرسال طلب جديد بعد فترة قصيرة
-      setTimeout(longPolling, 1000); // طلب جديد بعد ثانية واحدة
+      // بمجرد تحديث البيانات، يتم إرسال طلب جديد
+      setTimeout(checkForUpdates, 1000);
     })
     .catch(error => {
       console.error('Error loading JSON data:', error);
 
-      // إذا كان هناك خطأ، انتظر ثم حاول مرة أخرى
-      setTimeout(longPolling, 5000); // إعادة المحاولة بعد 5 ثوانٍ في حالة وجود خطأ
+      // في حالة وجود خطأ، انتظر لفترة أطول قليلاً قبل إعادة المحاولة
+      setTimeout(checkForUpdates, 5000);
     });
 }
 
 // استدعاء التحديث عند التحميل لأول مرة
 window.onload = function() {
-  longPolling();
+  checkForUpdates();
 
   // تأثيرات النص
   setTimeout(() => {
