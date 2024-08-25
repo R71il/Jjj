@@ -226,7 +226,9 @@
     </style>
 
   <script>
-  function updateContent(data) {
+  let previousEtag = null;
+
+function updateContent(data) {
   const link = data.cinemana.link;
   const text = data.comp.comp;
 
@@ -241,19 +243,27 @@
 }
 
 function checkForUpdates() {
-  fetch('settings.json')
-    .then(response => response.json())
-    .then(data => {
-      updateContent(data);
+  fetch('settings.json', { method: 'HEAD' })
+    .then(response => {
+      const newEtag = response.headers.get('ETag') || response.headers.get('Last-Modified');
 
-      // بمجرد تحديث البيانات، يتم إرسال طلب جديد
-      setTimeout(checkForUpdates, 1000);
+      if (newEtag && newEtag !== previousEtag) {
+        previousEtag = newEtag;
+        
+        // جلب البيانات الفعلية وتحديث المحتوى
+        return fetch('settings.json')
+          .then(response => response.json())
+          .then(data => {
+            updateContent(data);
+          });
+      } else {
+        // إعادة التحقق بعد فترة قصيرة إذا لم يكن هناك تغيير
+        setTimeout(checkForUpdates, 5000);
+      }
     })
     .catch(error => {
-      console.error('Error loading JSON data:', error);
-
-      // في حالة وجود خطأ، انتظر لفترة أطول قليلاً قبل إعادة المحاولة
-      setTimeout(checkForUpdates, 5000);
+      console.error('Error checking for updates:', error);
+      setTimeout(checkForUpdates, 10000); // إعادة المحاولة بعد 10 ثوانٍ في حالة حدوث خطأ
     });
 }
 
@@ -282,7 +292,7 @@ window.onload = function() {
             <div class="rectangle">
           <i class="fa-solid fa-circle-check check-icon"></i>
           <img src="https://getcinemana.netlify.app/images/313210a4661a565b62de6.jpg" alt="Icon" class="icon">
-          <div class="text-content">سينمانا</div>
+          <div class="text-content">سينمان</div>
           <div class="sub-text">Version: 4.1.0</div>
           <div class="bottom-right-text-text" id="bottomRightText"></div>
           <div class="bottom-right-text"> • الشهادة </div>
